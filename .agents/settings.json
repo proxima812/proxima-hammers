@@ -1,0 +1,18 @@
+{
+  "project": {
+    "name": "Proxima Hammers",
+    "mod_id": "proximahammers",
+    "version": "1.0",
+    "github_owner": "proxima812",
+    "deploy": ["modrinth"]
+  },
+  "checks": {
+    "legacy_reference_check": true,
+    "preserve": [
+      "common/src/main/resources/assets/proximahammers/textures",
+      "common/src/main/resources/assets/proximahammers/lang",
+      "common/src/main/generated/data/proximahammers/recipe",
+      "common/src/main/generated/assets/proximahammers/models"
+    ]
+  }
+}

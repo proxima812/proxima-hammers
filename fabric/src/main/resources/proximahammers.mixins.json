@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "io.github.proxima812.proximahammers.fabric.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.8",
+  "client": [
+  ],
+  "mixins": [
+    "ServerPlayerGameModeMixinFabric"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

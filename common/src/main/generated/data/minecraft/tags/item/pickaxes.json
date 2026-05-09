@@ -1,0 +1,29 @@
+{
+  "values": [
+    "ProximaHammers:stone_hammer",
+    "ProximaHammers:iron_hammer",
+    "ProximaHammers:gold_hammer",
+    "ProximaHammers:diamond_hammer",
+    "ProximaHammers:netherite_hammer",
+    "ProximaHammers:stone_impact_hammer",
+    "ProximaHammers:iron_impact_hammer",
+    "ProximaHammers:gold_impact_hammer",
+    "ProximaHammers:diamond_impact_hammer",
+    "ProximaHammers:netherite_impact_hammer",
+    "ProximaHammers:stone_reinforced_hammer",
+    "ProximaHammers:iron_reinforced_hammer",
+    "ProximaHammers:gold_reinforced_hammer",
+    "ProximaHammers:diamond_reinforced_hammer",
+    "ProximaHammers:netherite_reinforced_hammer",
+    "ProximaHammers:stone_reinforced_impact_hammer",
+    "ProximaHammers:iron_reinforced_impact_hammer",
+    "ProximaHammers:gold_reinforced_impact_hammer",
+    "ProximaHammers:diamond_reinforced_impact_hammer",
+    "ProximaHammers:netherite_reinforced_impact_hammer",
+    "ProximaHammers:stone_destructor_hammer",
+    "ProximaHammers:iron_destructor_hammer",
+    "ProximaHammers:gold_destructor_hammer",
+    "ProximaHammers:diamond_destructor_hammer",
+    "ProximaHammers:netherite_destructor_hammer"
+  ]
+}

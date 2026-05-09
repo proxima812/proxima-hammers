@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "a": "minecraft:stone",
+    "b": "minecraft:stick",
+    "c": "ProximaHammers:reinforced_impact_core"
+  },
+  "pattern": [
+    "aca",
+    " ba",
+    " b "
+  ],
+  "result": {
+    "count": 1,
+    "id": "ProximaHammers:stone_reinforced_impact_hammer"
+  }
+}

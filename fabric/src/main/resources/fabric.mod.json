@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${version}",
+  "name": "Proxima Hammers",
+  "description": "Proxima Hammers!",
+  "authors": [
+    "proxima812"
+  ],
+  "contact": {
+    "homepage": "https://github.com/proxima812/ProximaHammers",
+    "sources": "https://github.com/proxima812/ProximaHammers"
+  },
+  "license": "GPL3",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "io.github.proxima812.proximahammers.fabric.HammersFabric"
+    ],
+    "client": [
+      "io.github.proxima812.proximahammers.fabric.HammersFabricClient"
+    ],
+    "fabric-datagen": [
+      "io.github.proxima812.proximahammers.fabric.DataGenerators"
+    ]
+  },
+  "mixins": [
+    "proximahammers.mixins.json"
+  ],
+  "depends": {
+    "fabric-api": "${fabric_api_version_range}",
+    "minecraft": "${minecraft_version_range_semver}"
+  }
+}

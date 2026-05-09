@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "a": "minecraft:iron_block",
+    "b": "minecraft:stick",
+    "c": "ProximaHammers:destructor_core"
+  },
+  "pattern": [
+    "aca",
+    " ba",
+    " b "
+  ],
+  "result": {
+    "count": 1,
+    "id": "ProximaHammers:iron_destructor_hammer"
+  }
+}

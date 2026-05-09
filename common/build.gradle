@@ -1,0 +1,17 @@
+plugins {
+    id 'net.fabricmc.fabric-loom'
+}
+
+loom {
+//    accessWidenerPath = file("src/main/resources/proximahammers.accesswidener")
+}
+
+sourceSets.main.resources { srcDirs += file("src/main/generated") }
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+}
+
+test {
+    useJUnitPlatform()
+}

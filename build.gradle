@@ -1,0 +1,144 @@
+plugins {
+    id 'java-library'
+    id 'net.fabricmc.fabric-loom' version '1.15-SNAPSHOT' apply(false)
+    id 'net.neoforged.moddev' version '2.0.141' apply(false)
+    id "me.modmuss50.mod-publish-plugin" version "1.1.0"
+    id "dev.nanite.nanite-plugin" version "0.1.0-SNAPSHOT"
+}
+
+tasks.named('wrapper', Wrapper).configure {
+    distributionType = Wrapper.DistributionType.BIN
+}
+
+nanite {
+    changelog {
+        file = file("./CHANGELOG.md")
+    }
+}
+
+def isSnapshot = providers.environmentVariable("SNAPSHOT").map { it == "true" }.getOrElse(false)
+
+allprojects {
+    apply plugin: 'idea'
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
+
+    version = isSnapshot ? "${minecraft_version}-SNAPSHOT" : mod_version
+    group = 'io.github.proxima812'
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+        options.release = 25
+    }
+
+    idea {
+        module {
+            downloadSources = true
+            downloadJavadoc = true
+        }
+    }
+}
+
+subprojects {
+    base {
+        archivesName = "${archives_base_name}-$project.name"
+    }
+
+    repositories {
+        maven {
+            url = uri("https://modmaven.dev/")
+            content {
+                includeGroup "mezz.jei"
+            }
+        }
+    }
+
+    if (project.name != "common") {
+        dependencies {
+            api project(":common")
+        }
+
+        jar {
+            from project(":common").sourceSets.main.output
+        }
+    }
+
+    def replaceProperties = [
+            mod_id: mod_id,
+            minecraft_version_range_maven: minecraft_version_range_maven,
+            minecraft_version_range_semver: minecraft_version_range_semver,
+            neoforge_version: neoforge_version,
+            neoforge_version_range: neoforge_version_range,
+            fabric_loader_version: fabric_loader_version,
+            fabric_api_version: fabric_api_version,
+            fabric_api_version_range: fabric_api_version_range,
+            version: version,
+    ]
+
+    processResources {
+        inputs.properties replaceProperties
+
+        filesMatching(["META-INF/neoforge.mods.toml", "fabric.mod.json", "META-INF/mods.toml"]) {
+            expand replaceProperties
+        }
+    }
+
+    publishing {
+        publications {
+            register("maven${project.name.capitalize()}", MavenPublication) {
+                artifactId = "${rootProject.archives_base_name}-${project.name}"
+                from components.java
+            }
+        }
+
+        repositories {
+            def token = providers.environmentVariable("NANITE_TOKEN");
+            if (token.isPresent()) {
+                maven {
+                    url "https://maven.nanite.dev/releases"
+                    credentials {
+                        username = "nanite"
+                        password = providers.environmentVariable("NANITE_TOKEN").get()
+                    }
+                }
+            }
+        }
+    }
+}
+
+tasks.named("publishMods") {
+    dependsOn tasks.named("createChangelog")
+}
+
+publishMods {
+    dryRun = providers.environmentVariable("MODRINTH_TOKEN").getOrNull() == null
+    changelog = tasks.named("createChangelog").flatMap { it.outputFile }.map { it.asFile.text }
+    version = project.version
+    type = STABLE
+
+    def createOptions = { String modLoader ->
+        publishOptions {
+            file = project.provider { project(":$modLoader").tasks.jar }.flatMap { it.archiveFile }
+            displayName = "Proxima Hammers ${modLoader.capitalize()} ${mod_version}"
+            modLoaders.add(modLoader)
+        }
+    }
+
+    def modrinthOptions = modrinthOptions {
+        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        projectId = "${modrinth_id}"
+        supported_minecraft_versions.split(",").each {
+            minecraftVersions.add(it.trim())
+        }
+    }
+
+    modrinth("modrinthFabric") {
+        from(modrinthOptions, createOptions("fabric"))
+        requires("fabric-api")
+    }
+
+    modrinth("modrinthNeoforge") {
+        from(modrinthOptions, createOptions("neoforge"))
+    }
+}
+

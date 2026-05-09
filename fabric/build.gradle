@@ -1,0 +1,40 @@
+plugins {
+    id 'net.fabricmc.fabric-loom'
+}
+
+fabricApi {
+    configureDataGeneration() {
+        createSourceSet = false
+        addToResources = false
+        outputDirectory = project(":common").file("src/main/generated")
+        client = true
+    }
+}
+
+loom {
+//    accessWidenerPath = project(":common").file("src/main/resources/proximahammers.accesswidener")
+
+    runs {
+        configureEach {
+            ideConfigGenerated = true
+        }
+    }
+
+    mods {
+        "${project.mod_id}" {
+            sourceSet sourceSets.main
+            sourceSet("main", ":common")
+        }
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+
+    implementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+}
+
+java {
+    withSourcesJar()
+}

@@ -1,0 +1,32 @@
+modLoader = "javafml"
+loaderVersion = "[2,)"
+issueTrackerURL = "https://github.com/proxima812/ProximaHammers/issues"
+license = "GPL3"
+
+
+[[mods]]
+modId = "${mod_id}"
+version = "${version}"
+displayName = "Proxima Hammers"
+authors = "proxima812"
+description = '''
+Add hammers to the game that are able to mine in a 3x3, 3x3x3, 5x5x3 and finally a 5x5x5! They\'re pretty awesome.
+'''
+displayURL = "https://github.com/proxima812/ProximaHammers"
+
+[[dependencies.${mod_id}]]
+modId = "neoforge"
+required = true
+versionRange = "${neoforge_version_range}"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.${mod_id}]]
+modId = "minecraft"
+required = true
+versionRange = "${minecraft_version_range_maven}"
+ordering = "NONE"
+side = "BOTH"
+
+[[mixins]]
+config = "proximahammers.mixins.json"

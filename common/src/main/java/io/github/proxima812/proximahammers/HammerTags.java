@@ -1,0 +1,12 @@
+package io.github.proxima812.proximahammers;
+
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+
+public interface HammerTags {
+    TagKey<Block> HAMMER_NO_SMASHY = TagKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(Hammers.MOD_ID, "hammer_no_smashy"));
+    TagKey<Item> HAMMERS = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(Hammers.MOD_ID, "hammer"));
+}
