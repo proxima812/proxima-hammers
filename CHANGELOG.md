@@ -10,3 +10,4 @@
 - Added Thor Matrix double-jump launch, high-speed glide, white magic particles, no durability loss, and fall/impact protection while holding the hammer.
 - Added generated recipes, item models, item tags, repair tags, English translations, and Russian translations.
 - Removed old Xima's Do It block/UI content and NeoForge publishing surface.
+- Prepared Modrinth metadata, release icon, GitHub workflows, and release notes for the `26.1.x` Fabric build.
