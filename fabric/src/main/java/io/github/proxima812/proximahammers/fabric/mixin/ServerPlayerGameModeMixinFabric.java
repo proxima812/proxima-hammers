@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import io.github.proxima812.proximahammers.HammerItem;
 
 /**
- * Forge and fabric seem to have different source sets so this is required... Fun
+ * Fabric keeps this mixin in the platform source set.
  */
 @Mixin(ServerPlayerGameMode.class)
 public class ServerPlayerGameModeMixinFabric {

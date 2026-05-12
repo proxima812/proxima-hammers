@@ -1,7 +1,6 @@
 plugins {
     id 'java-library'
     id 'net.fabricmc.fabric-loom' version '1.15-SNAPSHOT' apply(false)
-    id 'net.neoforged.moddev' version '2.0.141' apply(false)
     id "me.modmuss50.mod-publish-plugin" version "1.1.0"
     id "dev.nanite.nanite-plugin" version "0.1.0-SNAPSHOT"
 }
@@ -67,8 +66,6 @@ subprojects {
             mod_id: mod_id,
             minecraft_version_range_maven: minecraft_version_range_maven,
             minecraft_version_range_semver: minecraft_version_range_semver,
-            neoforge_version: neoforge_version,
-            neoforge_version_range: neoforge_version_range,
             fabric_loader_version: fabric_loader_version,
             fabric_api_version: fabric_api_version,
             fabric_api_version_range: fabric_api_version_range,
@@ -78,7 +75,7 @@ subprojects {
     processResources {
         inputs.properties replaceProperties
 
-        filesMatching(["META-INF/neoforge.mods.toml", "fabric.mod.json", "META-INF/mods.toml"]) {
+        filesMatching(["fabric.mod.json"]) {
             expand replaceProperties
         }
     }
@@ -135,10 +132,6 @@ publishMods {
     modrinth("modrinthFabric") {
         from(modrinthOptions, createOptions("fabric"))
         requires("fabric-api")
-    }
-
-    modrinth("modrinthNeoforge") {
-        from(modrinthOptions, createOptions("neoforge"))
     }
 }
 

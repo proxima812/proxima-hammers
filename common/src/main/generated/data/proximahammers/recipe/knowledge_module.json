@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "b": "minecraft:bookshelf",
+    "c": "minecraft:enchanting_table",
+    "e": "minecraft:experience_bottle",
+    "l": "minecraft:lapis_block"
+  },
+  "pattern": [
+    "beb",
+    "lcl",
+    "beb"
+  ],
+  "result": {
+    "id": "proximahammers:knowledge_module"
+  }
+}

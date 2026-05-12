@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "a": "minecraft:iron_block",
+    "b": "minecraft:stick"
+  },
+  "pattern": [
+    "aaa",
+    "aaa",
+    " b "
+  ],
+  "result": {
+    "id": "proximahammers:improved_iron_hammer"
+  }
+}

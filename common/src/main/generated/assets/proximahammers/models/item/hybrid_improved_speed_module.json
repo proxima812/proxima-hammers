@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "proximahammers:item/hybrid_improved_speed_module"
+  }
+}

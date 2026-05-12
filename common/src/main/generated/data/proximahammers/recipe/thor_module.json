@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "b": "minecraft:netherite_block",
+    "e": "minecraft:elytra",
+    "m": "proximahammers:ultimate_legal_speed_module",
+    "r": "minecraft:lightning_rod",
+    "s": "minecraft:nether_star",
+    "t": "minecraft:trident"
+  },
+  "pattern": [
+    "rtr",
+    "ese",
+    "bmb"
+  ],
+  "result": {
+    "id": "proximahammers:thor_module"
+  }
+}

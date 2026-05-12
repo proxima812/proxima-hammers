@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "proximahammers:item/improved_lapis_hammer"
+  }
+}

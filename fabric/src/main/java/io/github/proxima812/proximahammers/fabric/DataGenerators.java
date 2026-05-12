@@ -11,7 +11,6 @@ import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.*;
 import net.minecraft.resources.ResourceKey;
@@ -19,13 +18,19 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Blocks;
 import io.github.proxima812.proximahammers.HammerItem;
 import io.github.proxima812.proximahammers.HammerItems;
+import io.github.proxima812.proximahammers.HammerModule;
 import io.github.proxima812.proximahammers.HammerTags;
+import io.github.proxima812.proximahammers.Hammers;
 import io.github.proxima812.proximahammers.recipe.RepairRecipe;
+import io.github.proxima812.proximahammers.recipe.SpeedMatrixRecipe;
 import io.github.proxima812.proximahammers.utils.DeferredResource;
 
 import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 public class DataGenerators implements DataGeneratorEntrypoint {
@@ -58,6 +63,11 @@ public class DataGenerators implements DataGeneratorEntrypoint {
 
             this.builder(HammerTags.HAMMERS).addAll(hammers);
             this.builder(ItemTags.PICKAXES).addAll(hammers);
+
+            HammerItems.HAMMER_REGISTRATIONS.stream()
+                    .map(HammerItems.HammerRegistration::family)
+                    .filter(family -> family.hasGeneratedRepairTag())
+                    .forEach(family -> this.builder(family.repairTag()).add(family.repairIngredient()));
         }
     }
 
@@ -77,80 +87,114 @@ public class DataGenerators implements DataGeneratorEntrypoint {
                 @Override
                 public void buildRecipes() {
                     SpecialRecipeBuilder.special(RepairRecipe::new)
-                            .save(this.output, "ProximaHammers:repair");
+                            .save(this.output, Hammers.MOD_ID + ":repair");
 
-                    standardHammer(HammerItems.STONE_HAMMER, Items.STONE);
-                    standardHammer(HammerItems.IRON_HAMMER, Items.IRON_INGOT);
-                    standardHammer(HammerItems.GOLD_HAMMER, Items.GOLD_INGOT);
-                    standardHammer(HammerItems.DIAMOND_HAMMER, Items.DIAMOND);
-                    standardHammer(HammerItems.NETHERITE_HAMMER, Items.NETHERITE_INGOT);
+                    SpecialRecipeBuilder.special(SpeedMatrixRecipe::new)
+                            .save(this.output, Hammers.MOD_ID + ":speed_matrix_upgrade");
 
-                    coreHammer(HammerItems.STONE_IMPACT_HAMMER, HammerItems.IMPACT_CORE, Items.STONE);
-                    coreHammer(HammerItems.IRON_IMPACT_HAMMER, HammerItems.IMPACT_CORE, Items.IRON_BLOCK);
-                    coreHammer(HammerItems.GOLD_IMPACT_HAMMER, HammerItems.IMPACT_CORE, Items.GOLD_BLOCK);
-                    coreHammer(HammerItems.DIAMOND_IMPACT_HAMMER, HammerItems.IMPACT_CORE, Items.DIAMOND_BLOCK);
-                    coreHammer(HammerItems.NETHERITE_IMPACT_HAMMER, HammerItems.IMPACT_CORE, Items.NETHERITE_BLOCK);
+                    HammerItems.HAMMER_REGISTRATIONS.forEach(registration -> {
+                        standardHammer(registration.base(), registration.family().baseRecipeMaterial());
+                        standardHammer(registration.improved(), registration.family().improvedRecipeMaterial());
+                    });
 
-                    coreHammer(HammerItems.STONE_FIVE_HAMMER, HammerItems.REINFORCED_CORE, Items.STONE);
-                    coreHammer(HammerItems.IRON_FIVE_HAMMER, HammerItems.REINFORCED_CORE, Items.IRON_BLOCK);
-                    coreHammer(HammerItems.GOLD_FIVE_HAMMER, HammerItems.REINFORCED_CORE, Items.GOLD_BLOCK);
-                    coreHammer(HammerItems.DIAMOND_FIVE_HAMMER, HammerItems.REINFORCED_CORE, Items.DIAMOND_BLOCK);
-                    coreHammer(HammerItems.NETHERITE_FIVE_HAMMER, HammerItems.REINFORCED_CORE, Items.NETHERITE_BLOCK);
-
-                    coreHammer(HammerItems.STONE_FIVE_IMPACT_HAMMER, HammerItems.REINFORCED_IMPACT_CORE, Items.STONE);
-                    coreHammer(HammerItems.IRON_FIVE_IMPACT_HAMMER, HammerItems.REINFORCED_IMPACT_CORE, Items.IRON_BLOCK);
-                    coreHammer(HammerItems.GOLD_FIVE_IMPACT_HAMMER, HammerItems.REINFORCED_IMPACT_CORE, Items.GOLD_BLOCK);
-                    coreHammer(HammerItems.DIAMOND_FIVE_IMPACT_HAMMER, HammerItems.REINFORCED_IMPACT_CORE, Items.DIAMOND_BLOCK);
-                    coreHammer(HammerItems.NETHERITE_FIVE_IMPACT_HAMMER, HammerItems.REINFORCED_IMPACT_CORE, Items.NETHERITE_BLOCK);
-
-                    coreHammer(HammerItems.STONE_FIVE_DESTROY_HAMMER, HammerItems.DESTRUCTOR_CORE, Items.STONE);
-                    coreHammer(HammerItems.IRON_FIVE_DESTROY_HAMMER, HammerItems.DESTRUCTOR_CORE, Items.IRON_BLOCK);
-                    coreHammer(HammerItems.GOLD_FIVE_DESTROY_HAMMER, HammerItems.DESTRUCTOR_CORE, Items.GOLD_BLOCK);
-                    coreHammer(HammerItems.DIAMOND_FIVE_DESTROY_HAMMER, HammerItems.DESTRUCTOR_CORE, Items.DIAMOND_BLOCK);
-                    coreHammer(HammerItems.NETHERITE_FIVE_DESTROY_HAMMER, HammerItems.DESTRUCTOR_CORE, Items.NETHERITE_BLOCK);
-
-                    // These kinda suck
-                    core(HammerItems.IMPACT_CORE, Items.REDSTONE, HammerItems.NETHERITE_HAMMER.get(), Items.IRON_BLOCK, Items.GOLD_BLOCK);
-                    core(HammerItems.REINFORCED_CORE, Items.REDSTONE_BLOCK, HammerItems.IMPACT_CORE.get(), Items.GOLD_BLOCK, Items.GOLD_BLOCK);
-                    core(HammerItems.REINFORCED_IMPACT_CORE, Items.REDSTONE_BLOCK, HammerItems.REINFORCED_CORE.get(), Items.DIAMOND_BLOCK, Items.GOLD_BLOCK);
-                    core(HammerItems.DESTRUCTOR_CORE, Items.REDSTONE_BLOCK, HammerItems.REINFORCED_IMPACT_CORE.get(), Items.DIAMOND_BLOCK, Items.DIAMOND_BLOCK);
+                    module(HammerItems.SPEED_MODULE, Items.SUGAR, Items.COPPER_INGOT, Items.REDSTONE);
+                    matrixUpgrade(HammerItems.IMPROVED_SPEED_MODULE, HammerItems.SPEED_MODULE.get());
+                    matrixUpgrade(HammerItems.HYBRID_IMPROVED_SPEED_MODULE, HammerItems.IMPROVED_SPEED_MODULE.get());
+                    matrixUpgrade(HammerItems.ULTIMATE_LEGAL_SPEED_MODULE, HammerItems.HYBRID_IMPROVED_SPEED_MODULE.get());
+                    magnetureModule();
+                    knowledgeModule();
+                    powerModule();
+                    thorModule();
                 }
 
                 private void standardHammer(DeferredResource<Item, HammerItem> hammer, ItemLike material) {
                     this.shaped(RecipeCategory.TOOLS, hammer.get())
                             .define('a', material)
                             .define('b', Items.STICK)
-                            .pattern("aba")
-                            .pattern(" ba")
+                            .pattern("aaa")
+                            .pattern("aaa")
                             .pattern(" b ")
                             .unlockedBy("has_material", has(material))
                             .save(recipeOutput);
                 }
 
-                private void coreHammer(DeferredResource<Item, HammerItem> hammer, DeferredResource<Item, Item> core, ItemLike material) {
-                    this.shaped(RecipeCategory.TOOLS, hammer.get())
-                            .define('a', material)
-                            .define('b', Items.STICK)
-                            .define('c', core.get())
-                            .pattern("aca")
-                            .pattern(" ba")
-                            .pattern(" b ")
-                            .unlockedBy("has_material", has(material))
+                private void module(DeferredResource<Item, ?> module, ItemLike left, ItemLike center, ItemLike right) {
+                    this.shaped(RecipeCategory.TOOLS, module.get())
+                            .define('a', left)
+                            .define('b', center)
+                            .define('c', right)
+                            .define('r', Items.REDSTONE)
+                            .pattern(" a ")
+                            .pattern("rbr")
+                            .pattern(" c ")
+                            .unlockedBy("has_module_core", has(center))
                             .save(recipeOutput);
                 }
 
-                private void core(DeferredResource<Item, Item> result, Item outside, Item inside, Item left, Item right) {
+                private void matrixUpgrade(DeferredResource<Item, ?> result, ItemLike ingredient) {
                     this.shaped(RecipeCategory.TOOLS, result.get())
-                            .define('a', outside)
-                            .define('b', inside)
-                            .define('c', left)
-                            .define('d', right)
-                            .pattern("aaa")
-                            .pattern("cbd")
-                            .pattern("aaa")
-                            .unlockedBy("has_material", has(HammerItems.STONE_HAMMER.get()))
+                            .define('m', ingredient)
+                            .pattern("mmm")
+                            .pattern("mmm")
+                            .pattern("mmm")
+                            .unlockedBy("has_matrix", has(ingredient))
                             .save(recipeOutput);
                 }
+
+                private void magnetureModule() {
+                    this.shaped(RecipeCategory.TOOLS, HammerItems.MAGNETURE_MODULE.get())
+                            .define('e', Items.ENDER_PEARL)
+                            .define('h', Blocks.HOPPER)
+                            .define('r', Blocks.REDSTONE_BLOCK)
+                            .define('c', Items.COMPASS)
+                            .pattern("ehe")
+                            .pattern("rcr")
+                            .pattern("ehe")
+                            .unlockedBy("has_ender_pearl", has(Items.ENDER_PEARL))
+                            .save(recipeOutput);
+                }
+
+                private void knowledgeModule() {
+                    this.shaped(RecipeCategory.TOOLS, HammerItems.KNOWLEDGE_MODULE.get())
+                            .define('b', Blocks.BOOKSHELF)
+                            .define('e', Items.EXPERIENCE_BOTTLE)
+                            .define('l', Blocks.LAPIS_BLOCK)
+                            .define('c', Blocks.ENCHANTING_TABLE)
+                            .pattern("beb")
+                            .pattern("lcl")
+                            .pattern("beb")
+                            .unlockedBy("has_experience_bottle", has(Items.EXPERIENCE_BOTTLE))
+                            .save(recipeOutput);
+                }
+
+                private void powerModule() {
+                    this.shaped(RecipeCategory.TOOLS, HammerItems.POWER_MODULE.get())
+                            .define('d', Blocks.DIAMOND_BLOCK)
+                            .define('b', Items.BLAZE_ROD)
+                            .define('a', Items.ANCIENT_DEBRIS)
+                            .define('n', Items.NETHERITE_INGOT)
+                            .pattern("dbd")
+                            .pattern("ana")
+                            .pattern("dbd")
+                            .unlockedBy("has_netherite_ingot", has(Items.NETHERITE_INGOT))
+                            .save(recipeOutput);
+                }
+
+                private void thorModule() {
+                    this.shaped(RecipeCategory.TOOLS, HammerItems.THOR_MODULE.get())
+                            .define('r', Items.LIGHTNING_ROD)
+                            .define('t', Items.TRIDENT)
+                            .define('e', Items.ELYTRA)
+                            .define('s', Items.NETHER_STAR)
+                            .define('b', Blocks.NETHERITE_BLOCK)
+                            .define('m', HammerItems.ULTIMATE_LEGAL_SPEED_MODULE.get())
+                            .pattern("rtr")
+                            .pattern("ese")
+                            .pattern("bmb")
+                            .unlockedBy("has_nether_star", has(Items.NETHER_STAR))
+                            .save(recipeOutput);
+                }
+
             };
         }
     }
@@ -162,41 +206,29 @@ public class DataGenerators implements DataGeneratorEntrypoint {
 
         @Override
         public void generateTranslations(HolderLookup.Provider registryLookup, TranslationBuilder translationBuilder) {
-            translationBuilder.add(HammerItems.STONE_HAMMER.get(), "Stone Hammer");
-            translationBuilder.add(HammerItems.IRON_HAMMER.get(), "Iron Hammer");
-            translationBuilder.add(HammerItems.GOLD_HAMMER.get(), "Gold Hammer");
-            translationBuilder.add(HammerItems.DIAMOND_HAMMER.get(), "Diamond Hammer");
-            translationBuilder.add(HammerItems.NETHERITE_HAMMER.get(), "Netherite Hammer");
-            translationBuilder.add(HammerItems.STONE_IMPACT_HAMMER.get(), "Stone Impact Hammer");
-            translationBuilder.add(HammerItems.IRON_IMPACT_HAMMER.get(), "Iron Impact Hammer");
-            translationBuilder.add(HammerItems.GOLD_IMPACT_HAMMER.get(), "Gold Impact Hammer");
-            translationBuilder.add(HammerItems.DIAMOND_IMPACT_HAMMER.get(), "Diamond Impact Hammer");
-            translationBuilder.add(HammerItems.NETHERITE_IMPACT_HAMMER.get(), "Netherite Impact Hammer");
-            translationBuilder.add(HammerItems.STONE_FIVE_HAMMER.get(), "Stone Reinforced Hammer");
-            translationBuilder.add(HammerItems.IRON_FIVE_HAMMER.get(), "Iron Reinforced Hammer");
-            translationBuilder.add(HammerItems.GOLD_FIVE_HAMMER.get(), "Gold Reinforced Hammer");
-            translationBuilder.add(HammerItems.DIAMOND_FIVE_HAMMER.get(), "Diamond Reinforced Hammer");
-            translationBuilder.add(HammerItems.NETHERITE_FIVE_HAMMER.get(), "Netherite Reinforced Hammer");
-            translationBuilder.add(HammerItems.STONE_FIVE_IMPACT_HAMMER.get(), "Stone Reinforced Impact Hammer");
-            translationBuilder.add(HammerItems.IRON_FIVE_IMPACT_HAMMER.get(), "Iron Reinforced Impact Hammer");
-            translationBuilder.add(HammerItems.GOLD_FIVE_IMPACT_HAMMER.get(), "Gold Reinforced Impact Hammer");
-            translationBuilder.add(HammerItems.DIAMOND_FIVE_IMPACT_HAMMER.get(), "Diamond Reinforced Impact Hammer");
-            translationBuilder.add(HammerItems.NETHERITE_FIVE_IMPACT_HAMMER.get(), "Netherite Reinforced Impact Hammer");
-            translationBuilder.add(HammerItems.STONE_FIVE_DESTROY_HAMMER.get(), "Stone Destructor Hammer");
-            translationBuilder.add(HammerItems.IRON_FIVE_DESTROY_HAMMER.get(), "Iron Destructor Hammer");
-            translationBuilder.add(HammerItems.GOLD_FIVE_DESTROY_HAMMER.get(), "Gold Destructor Hammer");
-            translationBuilder.add(HammerItems.DIAMOND_FIVE_DESTROY_HAMMER.get(), "Diamond Destructor Hammer");
-            translationBuilder.add(HammerItems.NETHERITE_FIVE_DESTROY_HAMMER.get(), "Netherite Destructor Hammer");
+            HammerItems.HAMMER_REGISTRATIONS.forEach(registration -> {
+                translationBuilder.add(registration.base().get(), registration.family().baseEnglishName());
+                translationBuilder.add(registration.improved().get(), registration.family().improvedEnglishName());
+            });
+            Set<HammerModule> describedModules = new HashSet<>();
+            for (HammerItems.ModuleRegistration module : HammerItems.MODULE_ITEMS) {
+                translationBuilder.add(module.item().get(), module.englishName());
+                if (describedModules.add(module.module())) {
+                    translationBuilder.add(module.module().descriptionKey(), module.module().englishDescription());
+                }
+            }
 
-            translationBuilder.add(HammerItems.IMPACT_CORE.get(), "Impact Core");
-            translationBuilder.add(HammerItems.REINFORCED_CORE.get(), "Reinforced Core");
-            translationBuilder.add(HammerItems.REINFORCED_IMPACT_CORE.get(), "Reinforced Impact Core");
-            translationBuilder.add(HammerItems.DESTRUCTOR_CORE.get(), "Destruction Core");
+            translationBuilder.add("proximahammers.tooltip.durability", "Durability: %s / %s left");
+            translationBuilder.add("proximahammers.tooltip.mining_speed", "Mining speed: %s");
+            translationBuilder.add("proximahammers.tooltip.attack_damage", "Attack damage: %s");
+            translationBuilder.add("proximahammers.tooltip.attack_speed", "Attack speed: %s");
+            translationBuilder.add("proximahammers.tooltip.area", "Mining area: %sx%sx%s");
+            translationBuilder.add("proximahammers.tooltip.enchantment_value", "Enchantability: %s");
+            translationBuilder.add("proximahammers.tooltip.modules", "Installed modules:");
+            translationBuilder.add("proximahammers.module.install_hint", "Install in a crafting table.");
+            translationBuilder.add("proximahammers.module.speed_bonus", "+%s mining speed");
 
-            translationBuilder.add("ProximaHammers.tooltip.durability_warning", "Hammer durability nearing 0%!");
-            translationBuilder.add("ProximaHammers.tooltip.size", "Mines a %sx%sx%s area");
-
-            translationBuilder.add("itemGroup.ProximaHammers.ProximaHammers_tab", "Proxima Hammers");
+            translationBuilder.add("itemGroup.proximahammers.proximahammers_tab", "Proxima Hammers");
         }
     }
 
@@ -213,19 +245,12 @@ public class DataGenerators implements DataGeneratorEntrypoint {
         @Override
         public void generateItemModels(ItemModelGenerators itemModelGenerator) {
             HammerItems.HAMMERS.forEach(e -> handHeldItemHandheld(itemModelGenerator, e));
-
-            handHeldItem(itemModelGenerator, HammerItems.IMPACT_CORE);
-            handHeldItem(itemModelGenerator, HammerItems.REINFORCED_CORE);
-            handHeldItem(itemModelGenerator, HammerItems.REINFORCED_IMPACT_CORE);
-            handHeldItem(itemModelGenerator, HammerItems.DESTRUCTOR_CORE);
+            HammerItems.MODULE_ITEMS.forEach(e -> itemModelGenerator.generateFlatItem(e.item().get(), ModelTemplates.FLAT_ITEM));
         }
 
         private <T extends Item> void handHeldItemHandheld(ItemModelGenerators itemModelGenerator, DeferredResource<Item, T> item) {
             itemModelGenerator.generateFlatItem(item.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
         }
 
-        private void handHeldItem(ItemModelGenerators itemModelGenerator, DeferredResource<Item, Item> item) {
-            itemModelGenerator.generateFlatItem(item.get(), ModelTemplates.FLAT_ITEM);
-        }
     }
 }

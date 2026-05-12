@@ -28,12 +28,6 @@ public enum SimpleJsonConfig {
 
     private List<CommentedEntry> entries = new LinkedList<>();
 
-    public final CommentedEntry disabledDurabilityTooltip = create(
-            "disabledDurabilityTooltip",
-            new JsonPrimitive(false),
-            "Set to true to disable the durability tooltip on hammers"
-    );
-
     public final CommentedEntry durabilityRepairPercentage = create(
             "durabilityRepairPercentage",
             new JsonPrimitive(33.33D),
@@ -44,12 +38,6 @@ public enum SimpleJsonConfig {
             "durabilityRepairPercentageNetherite",
             new JsonPrimitive(100D),
             "The percentage of durability restored per repair item for netherite hammers"
-    );
-
-    public final CommentedEntry allowHammerBreaking = create(
-            "allowHammerBreaking",
-            new JsonPrimitive(false),
-            "Set to true to allow hammers to break when running out of durability"
     );
 
     private JsonObject config;

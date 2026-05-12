@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "ProximaHammers:item/iron_hammer"
+    "model": "proximahammers:item/iron_hammer"
   }
 }

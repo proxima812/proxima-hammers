@@ -6,12 +6,11 @@
     "b": "minecraft:stick"
   },
   "pattern": [
-    "aba",
-    " ba",
+    "aaa",
+    "aaa",
     " b "
   ],
   "result": {
-    "count": 1,
-    "id": "ProximaHammers:gold_hammer"
+    "id": "proximahammers:gold_hammer"
   }
 }

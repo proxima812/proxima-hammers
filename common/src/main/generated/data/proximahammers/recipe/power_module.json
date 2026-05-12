@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "a": "minecraft:ancient_debris",
+    "b": "minecraft:blaze_rod",
+    "d": "minecraft:diamond_block",
+    "n": "minecraft:netherite_ingot"
+  },
+  "pattern": [
+    "dbd",
+    "ana",
+    "dbd"
+  ],
+  "result": {
+    "id": "proximahammers:power_module"
+  }
+}

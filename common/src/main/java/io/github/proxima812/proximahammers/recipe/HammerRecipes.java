@@ -10,4 +10,10 @@ public class HammerRecipes {
 
     public static final DeferredResource<RecipeSerializer<?>, RecipeSerializer<RepairRecipe>> REPAIR_RECIPE_SERIALIZER =
             new DeferredResource<>("repair", () -> new RecipeSerializer<>(RepairRecipe.CODEC, RepairRecipe.STREAM_CODEC));
+
+    public static final DeferredResource<RecipeType<?>, RecipeType<SpeedMatrixRecipe>> SPEED_MATRIX_RECIPE =
+            new DeferredResource<>("speed_matrix_upgrade", () -> new RecipeType<>() {});
+
+    public static final DeferredResource<RecipeSerializer<?>, RecipeSerializer<SpeedMatrixRecipe>> SPEED_MATRIX_RECIPE_SERIALIZER =
+            new DeferredResource<>("speed_matrix_upgrade", () -> new RecipeSerializer<>(SpeedMatrixRecipe.CODEC, SpeedMatrixRecipe.STREAM_CODEC));
 }

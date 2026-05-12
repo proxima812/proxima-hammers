@@ -8,6 +8,7 @@ $scanFiles = Get-ChildItem -Recurse -File -Force |
         $_.FullName -notmatch "\\.git\\" -and
         $_.FullName -notmatch "\\.gradle\\" -and
         $_.FullName -notmatch "\\build\\" -and
+        $_.FullName -notmatch "\\fabric\\run\\" -and
         $_.FullName -notmatch "\\.agents\\settings.json" -and
         $_.FullName -notmatch "\\.agents\\hooks\\preflight.ps1"
     }
@@ -38,8 +39,7 @@ $requiredPaths = @(
     "common/src/main/resources/assets/proximahammers/lang",
     "common/src/main/generated/data/proximahammers/recipe",
     "common/src/main/generated/assets/proximahammers/models/item",
-    "fabric/src/main/resources/proximahammers.mixins.json",
-    "neoforge/src/main/resources/proximahammers.mixins.json"
+    "fabric/src/main/resources/proximahammers.mixins.json"
 )
 
 foreach ($path in $requiredPaths) {

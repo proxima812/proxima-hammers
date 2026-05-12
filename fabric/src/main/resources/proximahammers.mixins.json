@@ -6,6 +6,7 @@
   "client": [
   ],
   "mixins": [
+    "LivingEntityMixinFabric",
     "ServerPlayerGameModeMixinFabric"
   ],
   "injectors": {

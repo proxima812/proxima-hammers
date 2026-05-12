@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "ProximaHammers:item/stone_hammer"
+    "layer0": "proximahammers:item/stone_hammer"
   }
 }

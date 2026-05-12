@@ -1,0 +1,4 @@
+interface:
+  display_name: "Proxima Animate Textures"
+  short_description: "Animate Proxima Hammers item and block textures."
+  default_prompt: "Create or update animated textures for Proxima Hammers using the existing asset pipeline."

@@ -23,6 +23,8 @@ import io.github.proxima812.proximahammers.HammerTags;
 import java.util.Iterator;
 
 public class SelectionOutlineRender {
+    private static final int DIG_OUTLINE_COLOR = 0x88FFFFFF;
+    private static final float DIG_OUTLINE_WIDTH = 2.5f;
 
     public static void render(ClientLevel world, Camera camera, PoseStack poseStack, MultiBufferSource consumers) {
         // Get the player
@@ -79,7 +81,7 @@ public class SelectionOutlineRender {
             return;
         }
 
-        var boundingBox = HammerItem.getAreaOfEffect(blockPos, direction, hammer.getRadius(), hammer.getDepth());
+        var boundingBox = HammerItem.getAreaOfEffect(blockPos, direction, hammer.getEffectiveRadius(itemStack), hammer.getEffectiveDepth(itemStack));
 
         // Transform the pose stack to the camera's position
         poseStack.pushPose();
@@ -106,7 +108,7 @@ public class SelectionOutlineRender {
             // Shift the pose stack to the block's position
             poseStack.translate(pos.getX(), pos.getY(), pos.getZ());
 
-            ShapeRenderer.renderShape(poseStack, consumers.getBuffer(RenderTypes.lines()), renderShape, 0, 0, 0, 0xFF000000, 4f);
+            ShapeRenderer.renderShape(poseStack, consumers.getBuffer(RenderTypes.lines()), renderShape, 0, 0, 0, DIG_OUTLINE_COLOR, DIG_OUTLINE_WIDTH);
             poseStack.popPose();
         }
 

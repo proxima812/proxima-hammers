@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "a": "minecraft:sugar",
+    "b": "minecraft:copper_ingot",
+    "c": "minecraft:redstone",
+    "r": "minecraft:redstone"
+  },
+  "pattern": [
+    " a ",
+    "rbr",
+    " c "
+  ],
+  "result": {
+    "id": "proximahammers:speed_module"
+  }
+}

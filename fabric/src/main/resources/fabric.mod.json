@@ -3,7 +3,7 @@
   "id": "${mod_id}",
   "version": "${version}",
   "name": "Proxima Hammers",
-  "description": "Proxima Hammers!",
+  "description": "Adds a progression of hammers and upgrade matrices for wide-area mining, speed upgrades, item magnetism, experience boosts, extra damage, and Thor-style hammer flight.",
   "authors": [
     "proxima812"
   ],
@@ -11,7 +11,8 @@
     "homepage": "https://github.com/proxima812/ProximaHammers",
     "sources": "https://github.com/proxima812/ProximaHammers"
   },
-  "license": "GPL3",
+  "license": "GPL-3.0-only",
+  "icon": "assets/proximahammers/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Proxima Add Gameplay Item"
+  short_description: "Add Proxima Hammers items, blocks, menus, recipes, and behavior."
+  default_prompt: "Add a new Proxima Hammers gameplay item or block with registration, resources, datagen, functionality, and verification."

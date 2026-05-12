@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "ProximaHammers:item/netherite_hammer"
+    "layer0": "proximahammers:item/netherite_hammer"
   }
 }

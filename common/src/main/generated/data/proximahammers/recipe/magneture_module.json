@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "c": "minecraft:compass",
+    "e": "minecraft:ender_pearl",
+    "h": "minecraft:hopper",
+    "r": "minecraft:redstone_block"
+  },
+  "pattern": [
+    "ehe",
+    "rcr",
+    "ehe"
+  ],
+  "result": {
+    "id": "proximahammers:magneture_module"
+  }
+}
