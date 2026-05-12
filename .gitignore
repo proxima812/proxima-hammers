@@ -8,7 +8,7 @@ out/
 output/
 bin/
 libs/
-
+.env
 .classpath
 .project
 .idea/
