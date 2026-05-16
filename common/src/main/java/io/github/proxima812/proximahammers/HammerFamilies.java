@@ -1,7 +1,7 @@
 package io.github.proxima812.proximahammers;
 
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -63,6 +63,6 @@ public final class HammerFamilies {
 
     private static HammerFamily custom(String id, String englishName, ToolMaterial material, ItemLike baseRecipeMaterial, ItemLike improvedRecipeMaterial, TagKey<Item> repairTag, String repairIngredientId) {
         return new HammerFamily(id, englishName, material, baseRecipeMaterial, improvedRecipeMaterial, 1.5F, repairTag,
-                ResourceKey.create(Registries.ITEM, Identifier.withDefaultNamespace(repairIngredientId)));
+                ResourceKey.create(Registries.ITEM, ResourceLocation.withDefaultNamespace(repairIngredientId)));
     }
 }

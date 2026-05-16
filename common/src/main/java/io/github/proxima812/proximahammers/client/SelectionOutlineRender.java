@@ -6,7 +6,7 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.level.block.state.BlockState;
@@ -108,7 +108,7 @@ public class SelectionOutlineRender {
             // Shift the pose stack to the block's position
             poseStack.translate(pos.getX(), pos.getY(), pos.getZ());
 
-            ShapeRenderer.renderShape(poseStack, consumers.getBuffer(RenderTypes.lines()), renderShape, 0, 0, 0, DIG_OUTLINE_COLOR, DIG_OUTLINE_WIDTH);
+            ShapeRenderer.renderShape(poseStack, consumers.getBuffer(RenderType.lines()), renderShape, 0, 0, 0, DIG_OUTLINE_COLOR);
             poseStack.popPose();
         }
 

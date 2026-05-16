@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.level.gamerules.GameRules;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -241,7 +241,7 @@ public class HammerItem extends Item {
                         });
                     }
 
-                    if (xp != -1 && ((ServerLevel) level).getGameRules().get(GameRules.BLOCK_DROPS)) {
+                    if (xp != -1 && ((ServerLevel) level).getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS)) {
                         ExperienceOrb.award((ServerLevel) level, Vec3.atCenterOf(blockPos), getEffectiveExperience(hammerStack, xp));
                     }
                 }

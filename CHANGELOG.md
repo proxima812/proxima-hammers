@@ -1,5 +1,9 @@
 # Proxima Hammers Changelog
 
+## [1.0+1.21.6]
+
+- Backported Proxima Hammers 1.0 content to Minecraft `1.21.6`.
+
 ## [1.0+1.21.11]
 
 - Backported Proxima Hammers 1.0 content to Minecraft `1.21.11`.

@@ -2,7 +2,7 @@ package io.github.proxima812.proximahammers.fabric;
 
 import net.fabricmc.api.ClientModInitializer;
 
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import io.github.proxima812.proximahammers.client.SelectionOutlineRender;
@@ -15,7 +15,7 @@ public class HammersFabricClient implements ClientModInitializer {
             SelectionOutlineRender.render(
                     world,
                     Minecraft.getInstance().gameRenderer.getMainCamera(),
-                    context.matrices(),
+                    context.matrixStack(),
                     context.consumers()
             );
 
