@@ -1,8 +1,8 @@
 package io.github.proxima812.proximahammers.fabric;
 
-import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
-import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -22,7 +22,7 @@ import io.github.proxima812.proximahammers.utils.DeferredResource;
 public class HammersFabric implements ModInitializer {
     public static final ResourceKey<CreativeModeTab> CREATIVE_TAB_KEY = ResourceKey.create(Registries.CREATIVE_MODE_TAB, Hammers.id("item_group"));
 
-    public static final CreativeModeTab CREATIVE_TAB = FabricCreativeModeTab.builder()
+    public static final CreativeModeTab CREATIVE_TAB = FabricItemGroup.builder()
             .icon(() -> new ItemStack(HammerItems.hammer("netherite").get()))
             .title(Component.translatable("itemGroup.proximahammers.proximahammers_tab"))
             .build();
@@ -42,7 +42,7 @@ public class HammersFabric implements ModInitializer {
         registerRecipe(HammerRecipes.SPEED_MATRIX_RECIPE, HammerRecipes.SPEED_MATRIX_RECIPE_SERIALIZER);
         ServerTickEvents.END_SERVER_TICK.register(server -> server.getPlayerList().getPlayers().forEach(HammerPowers::tick));
 
-        CreativeModeTabEvents.modifyOutputEvent(CREATIVE_TAB_KEY).register(itemGroup -> {
+        ItemGroupEvents.modifyEntriesEvent(CREATIVE_TAB_KEY).register(itemGroup -> {
             for (var item : HammerItems.ITEMS) {
                 itemGroup.accept(item.get());
             }

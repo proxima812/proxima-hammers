@@ -1,9 +1,7 @@
 package io.github.proxima812.proximahammers.recipe;
 
 import com.mojang.datafixers.util.Pair;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
@@ -31,7 +29,7 @@ public class RepairRecipe extends CustomRecipe {
     public static final StreamCodec<RegistryFriendlyByteBuf, RepairRecipe> STREAM_CODEC = StreamCodec.unit(INSTANCE);
 
     public RepairRecipe() {
-        super();
+        super(CraftingBookCategory.EQUIPMENT);
     }
 
     @Override
@@ -74,7 +72,7 @@ public class RepairRecipe extends CustomRecipe {
     }
 
     @Override
-    public @NotNull ItemStack assemble(CraftingInput recipeInput) {
+    public @NotNull ItemStack assemble(CraftingInput recipeInput, HolderLookup.Provider provider) {
         var repairTargets = getRepairTargets(recipeInput);
 
         // This shouldn't be possible, but just in case

@@ -5,10 +5,12 @@ import io.github.proxima812.proximahammers.HammerItem;
 import io.github.proxima812.proximahammers.HammerModule;
 import io.github.proxima812.proximahammers.HammerModuleData;
 import io.github.proxima812.proximahammers.HammerModuleItem;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -23,7 +25,7 @@ public class SpeedMatrixRecipe extends CustomRecipe {
     public static final StreamCodec<RegistryFriendlyByteBuf, SpeedMatrixRecipe> STREAM_CODEC = StreamCodec.unit(INSTANCE);
 
     public SpeedMatrixRecipe() {
-        super();
+        super(CraftingBookCategory.EQUIPMENT);
     }
 
     @Override
@@ -32,7 +34,7 @@ public class SpeedMatrixRecipe extends CustomRecipe {
     }
 
     @Override
-    public @NotNull ItemStack assemble(CraftingInput recipeInput) {
+    public @NotNull ItemStack assemble(CraftingInput recipeInput, HolderLookup.Provider provider) {
         ItemStack hammer = getTargetHammer(recipeInput);
         if (hammer == null) {
             return ItemStack.EMPTY;
