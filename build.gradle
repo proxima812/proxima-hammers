@@ -27,7 +27,7 @@ allprojects {
 
     tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8'
-        options.release = 25
+        options.release = (findProperty("java_release") as String).toInteger()
     }
 
     idea {
