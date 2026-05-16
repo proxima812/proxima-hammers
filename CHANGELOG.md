@@ -1,6 +1,6 @@
 # Proxima Hammers Changelog
 
-## [1.0]
+## [1.0+26.1]
 
 - Reworked the project as a Fabric-only mod under the `proximahammers` namespace.
 - Added hammer families from vanilla and custom materials, including improved variants.

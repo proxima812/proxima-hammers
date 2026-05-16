@@ -14,7 +14,7 @@ Fabric-only Minecraft mod that adds a progression of hammers and upgrade matrice
 
 - Minecraft `26.1` through `26.1.2` for this build
 - Fabric Loader `0.18.4` or newer
-- Fabric API `0.144.0+26.1` or newer
+- Fabric API `0.149.0+26.1.2` or newer
 - Java `25`
 
 The current build compiles against Minecraft `26.1.2`. Older Minecraft versions are released from dedicated `mc/*` compatibility branches.
