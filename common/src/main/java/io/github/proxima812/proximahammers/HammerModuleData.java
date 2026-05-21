@@ -18,11 +18,11 @@ public final class HammerModuleData {
 
     public static Set<HammerModule> getModules(ItemStack stack) {
         var data = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        var modules = data.getCompoundOrEmpty(ROOT);
+        var modules = data.contains(ROOT) ? data.getCompound(ROOT) : new CompoundTag();
         Set<HammerModule> result = EnumSet.noneOf(HammerModule.class);
 
         for (HammerModule module : HammerModule.values()) {
-            if (modules.getBooleanOr(module.id(), false)) {
+            if (modules.contains(module.id()) && modules.getBoolean(module.id())) {
                 result.add(module);
             }
         }
@@ -49,7 +49,7 @@ public final class HammerModuleData {
         result.setCount(1);
 
         CustomData.update(DataComponents.CUSTOM_DATA, result, tag -> {
-            CompoundTag moduleTag = tag.getCompoundOrEmpty(ROOT).copy();
+            CompoundTag moduleTag = (tag.contains(ROOT) ? tag.getCompound(ROOT) : new CompoundTag()).copy();
             for (HammerModule module : modules) {
                 moduleTag.putBoolean(module.id(), true);
             }
@@ -73,7 +73,7 @@ public final class HammerModuleData {
         }
 
         var data = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        return data.getFloatOr(SPEED_BONUS, 2.0F);
+        return data.contains(SPEED_BONUS) ? data.getFloat(SPEED_BONUS) : 2.0F;
     }
 
     public static List<HammerModule> installableModules(ItemStack hammer, ItemStack left, ItemStack right) {

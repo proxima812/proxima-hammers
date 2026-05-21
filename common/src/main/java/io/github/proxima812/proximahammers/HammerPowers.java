@@ -55,6 +55,10 @@ public final class HammerPowers {
                 && (damageSource.is(DamageTypeTags.IS_FALL) || damageSource.is(DamageTypes.FLY_INTO_WALL));
     }
 
+    public static void setJumping(ServerPlayer player, boolean jumping) {
+        THOR_STATES.computeIfAbsent(player.getUUID(), ignored -> new ThorState()).jumping = jumping;
+    }
+
     private static boolean hasModule(ItemStack stack, HammerModule module) {
         return stack.getItem() instanceof HammerItem && HammerModuleData.has(stack, module);
     }
@@ -81,7 +85,7 @@ public final class HammerPowers {
         ThorState state = THOR_STATES.computeIfAbsent(player.getUUID(), ignored -> new ThorState());
         state.age++;
 
-        boolean jump = player.getLastClientInput().jump();
+        boolean jump = state.jumping;
         if (jump && !state.wasJumping) {
             if (state.age - state.lastJumpTick <= THOR_DOUBLE_JUMP_WINDOW_TICKS) {
                 launchThor(player, state);
@@ -202,6 +206,7 @@ public final class HammerPowers {
         private int lastJumpTick = -THOR_DOUBLE_JUMP_WINDOW_TICKS;
         private int boostTicks;
         private double cruiseSpeed;
+        private boolean jumping;
         private boolean wasJumping;
         private boolean active;
     }

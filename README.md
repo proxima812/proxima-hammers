@@ -12,12 +12,12 @@ Fabric-only Minecraft mod that adds a progression of hammers and upgrade matrice
 
 ## Requirements
 
-- Minecraft `26.1` through `26.1.2` for this build
+- Minecraft `1.21.1` for this build
 - Fabric Loader `0.18.4` or newer
-- Fabric API `0.149.0+26.1.2` or newer
-- Java `25`
+- Fabric API `0.116.12+1.21.1` or newer
+- Java `21`
 
-The current build compiles against Minecraft `26.1.2`. Older Minecraft versions are released from dedicated `mc/*` compatibility branches.
+The current build compiles against Minecraft `1.21.1` from `main`.
 
 ## Build
 
@@ -28,5 +28,5 @@ The current build compiles against Minecraft `26.1.2`. Older Minecraft versions 
 The release jar is generated at:
 
 ```text
-fabric/build/libs/proxima-hammers-fabric-1.0.jar
+fabric/build/libs/proxima-hammers-fabric-1.0+1.21.1.jar
 ```

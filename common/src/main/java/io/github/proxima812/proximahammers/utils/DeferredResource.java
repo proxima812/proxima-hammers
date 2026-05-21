@@ -2,19 +2,19 @@ package io.github.proxima812.proximahammers.utils;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import io.github.proxima812.proximahammers.Hammers;
 
 import java.util.Objects;
 import java.util.function.Supplier;
 
 public final class DeferredResource<R, T extends R> implements Supplier<T> {
-    private final Identifier location;
+    private final ResourceLocation location;
     private final Supplier<T> creator;
 
     private T instance;
 
-    public DeferredResource(Identifier location, Supplier<T> creator) {
+    public DeferredResource(ResourceLocation location, Supplier<T> creator) {
         this.location = location;
         this.creator = creator;
     }
@@ -23,7 +23,7 @@ public final class DeferredResource<R, T extends R> implements Supplier<T> {
         this(Hammers.id(location), creator);
     }
 
-    public Identifier location() {
+    public ResourceLocation location() {
         return location;
     }
 

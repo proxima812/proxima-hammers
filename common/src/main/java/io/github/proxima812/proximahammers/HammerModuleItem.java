@@ -5,9 +5,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.TooltipDisplay;
 
-import java.util.function.Consumer;
+import java.util.List;
 
 public class HammerModuleItem extends Item {
     private final HammerModule module;
@@ -28,11 +27,11 @@ public class HammerModuleItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, TooltipDisplay tooltipDisplay, Consumer<Component> consumer, TooltipFlag tooltipFlag) {
-        consumer.accept(Component.translatable(module.descriptionKey()).withStyle(ChatFormatting.GRAY));
+    public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, List<Component> components, TooltipFlag tooltipFlag) {
+        components.add(Component.translatable(module.descriptionKey()).withStyle(ChatFormatting.GRAY));
         if (module == HammerModule.SPEED) {
-            consumer.accept(Component.translatable("proximahammers.module.speed_bonus", HammerItem.formatNumber(speedBonus)).withStyle(ChatFormatting.AQUA));
+            components.add(Component.translatable("proximahammers.module.speed_bonus", HammerItem.formatNumber(speedBonus)).withStyle(ChatFormatting.AQUA));
         }
-        consumer.accept(Component.translatable("proximahammers.module.install_hint").withStyle(ChatFormatting.DARK_GRAY));
+        components.add(Component.translatable("proximahammers.module.install_hint").withStyle(ChatFormatting.DARK_GRAY));
     }
 }

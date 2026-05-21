@@ -1,9 +1,7 @@
 package io.github.proxima812.proximahammers.recipe;
 
 import com.mojang.datafixers.util.Pair;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
@@ -12,11 +10,11 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.*;
-import net.minecraft.world.item.enchantment.Repairable;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import io.github.proxima812.proximahammers.HammerItem;
+import io.github.proxima812.proximahammers.HammerItems;
 import io.github.proxima812.proximahammers.config.SimpleJsonConfig;
 
 /**
@@ -31,7 +29,7 @@ public class RepairRecipe extends CustomRecipe {
     public static final StreamCodec<RegistryFriendlyByteBuf, RepairRecipe> STREAM_CODEC = StreamCodec.unit(INSTANCE);
 
     public RepairRecipe() {
-        super();
+        super(CraftingBookCategory.EQUIPMENT);
     }
 
     @Override
@@ -74,7 +72,12 @@ public class RepairRecipe extends CustomRecipe {
     }
 
     @Override
-    public @NotNull ItemStack assemble(CraftingInput recipeInput) {
+    public boolean canCraftInDimensions(int width, int height) {
+        return width * height >= 2;
+    }
+
+    @Override
+    public @NotNull ItemStack assemble(CraftingInput recipeInput, HolderLookup.Provider provider) {
         var repairTargets = getRepairTargets(recipeInput);
 
         // This shouldn't be possible, but just in case
@@ -139,12 +142,6 @@ public class RepairRecipe extends CustomRecipe {
             return null;
         }
 
-        // Get the repair material
-        Repairable repairable = hammer.get(DataComponents.REPAIRABLE);
-        if (repairable == null) {
-            return null;
-        }
-
         ItemStack availableRepairItem = null;
         boolean tooManyItems = false;
         for (int i = 0; i < recipeInput.size(); i++) {
@@ -155,7 +152,7 @@ public class RepairRecipe extends CustomRecipe {
                 continue;
             }
 
-            if (repairable.isValidRepairItem(stack)) {
+            if (isRepairItem(hammer, stack)) {
                 if (availableRepairItem != null) {
                     tooManyItems = true;
                     break;
@@ -173,11 +170,17 @@ public class RepairRecipe extends CustomRecipe {
     }
 
     private static boolean isRepairItem(ItemStack stack, ItemStack testStack) {
-        Repairable repairable = stack.get(DataComponents.REPAIRABLE);
-        if (repairable == null) {
-            return false;
+        for (HammerItems.HammerRegistration registration : HammerItems.HAMMER_REGISTRATIONS) {
+            if (stack.is(registration.base().get()) || stack.is(registration.improved().get())) {
+                var family = registration.family();
+                if (family.repairTag() != null) {
+                    return testStack.is(family.repairTag());
+                }
+
+                return family.material().getRepairIngredient().test(testStack);
+            }
         }
 
-        return repairable.isValidRepairItem(testStack);
+        return false;
     }
 }

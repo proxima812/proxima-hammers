@@ -1,8 +1,6 @@
 package io.github.proxima812.proximahammers;
 
 import io.github.proxima812.proximahammers.utils.DeferredResource;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 
 import java.util.ArrayList;
@@ -14,8 +12,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public final class HammerItems {
-    public static final Function<String, Item.Properties> DEFAULT_PROPERTIES = (name) -> new Item.Properties()
-            .setId(ResourceKey.create(Registries.ITEM, Hammers.id(name)));
+    public static final Function<String, Item.Properties> DEFAULT_PROPERTIES = (name) -> new Item.Properties();
 
     public static final List<DeferredResource<Item, ? extends Item>> ITEMS = new ArrayList<>();
     public static final List<DeferredResource<Item, HammerItem>> HAMMERS = new ArrayList<>();

@@ -8,19 +8,20 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
-import net.minecraft.world.item.component.TooltipDisplay;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.level.gamerules.GameRules;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -29,7 +30,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static io.github.proxima812.proximahammers.HammerTags.HAMMER_NO_SMASHY;
@@ -45,37 +45,40 @@ public class HammerItem extends Item {
     private final float attackSpeed;
     private final int enchantmentValue;
 
-    public HammerItem(Item.Properties rootProperties, ToolMaterial tier, int radius, int depth, int level) {
+    public HammerItem(Item.Properties rootProperties, Tier tier, int radius, int depth, int level) {
         this(rootProperties, tier, radius, depth, level, 1.0F, 1.0F, 1.0F);
     }
 
-    public HammerItem(Item.Properties rootProperties, ToolMaterial tier, int radius, int depth, int level, float statMultiplier, float speedMultiplier) {
+    public HammerItem(Item.Properties rootProperties, Tier tier, int radius, int depth, int level, float statMultiplier, float speedMultiplier) {
         this(rootProperties, tier, radius, depth, level, statMultiplier, speedMultiplier, statMultiplier);
     }
 
-    public HammerItem(Item.Properties rootProperties, ToolMaterial tier, int radius, int depth, int level, float statMultiplier, float speedMultiplier, float durabilityMultiplier) {
+    public HammerItem(Item.Properties rootProperties, Tier tier, int radius, int depth, int level, float statMultiplier, float speedMultiplier, float durabilityMultiplier) {
         super(computeProperties(tier, rootProperties, level, statMultiplier, speedMultiplier, durabilityMultiplier));
 
         this.depth = depth;
         this.radius = radius;
-        this.miningSpeed = tier.speed() * speedMultiplier;
-        this.attackDamage = (ATTACK_DAMAGE + tier.attackDamageBonus()) * statMultiplier;
+        this.miningSpeed = tier.getSpeed() * speedMultiplier;
+        this.attackDamage = (ATTACK_DAMAGE + tier.getAttackDamageBonus()) * statMultiplier;
         this.attackSpeed = ATTACK_SPEED;
-        this.enchantmentValue = Math.round(tier.enchantmentValue() * statMultiplier);
+        this.enchantmentValue = Math.round(tier.getEnchantmentValue() * statMultiplier);
     }
 
-    private static Item.Properties computeProperties(ToolMaterial tier, Item.Properties properties, int level) {
+    private static Item.Properties computeProperties(Tier tier, Item.Properties properties, int level) {
         return computeProperties(tier, properties, level, 1.0F, 1.0F);
     }
 
-    private static Item.Properties computeProperties(ToolMaterial tier, Item.Properties properties, int level, float statMultiplier, float speedMultiplier) {
+    private static Item.Properties computeProperties(Tier tier, Item.Properties properties, int level, float statMultiplier, float speedMultiplier) {
         return computeProperties(tier, properties, level, statMultiplier, speedMultiplier, statMultiplier);
     }
 
-    private static Item.Properties computeProperties(ToolMaterial tier, Item.Properties properties, int level, float statMultiplier, float speedMultiplier, float durabilityMultiplier) {
-        properties.pickaxe(wrapMaterial(tier, computeDurability(tier, level, durabilityMultiplier), statMultiplier, speedMultiplier), ATTACK_DAMAGE * statMultiplier, ATTACK_SPEED);
+    private static Item.Properties computeProperties(Tier tier, Item.Properties properties, int level, float statMultiplier, float speedMultiplier, float durabilityMultiplier) {
+        Tier effectiveTier = wrapMaterial(tier, computeDurability(tier, level, durabilityMultiplier), statMultiplier, speedMultiplier);
+        properties.durability(effectiveTier.getUses())
+                .component(DataComponents.TOOL, effectiveTier.createToolProperties(BlockTags.MINEABLE_WITH_PICKAXE))
+                .attributes(DiggerItem.createAttributes(effectiveTier, ATTACK_DAMAGE * statMultiplier, ATTACK_SPEED));
 
-        if (tier == ToolMaterial.NETHERITE) {
+        if (tier == Tiers.NETHERITE) {
             properties.fireResistant();
         }
 
@@ -83,7 +86,7 @@ public class HammerItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, TooltipDisplay tooltipDisplay, Consumer<Component> consumer, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, List<Component> components, TooltipFlag tooltipFlag) {
         int damage = Math.max(0, itemStack.getDamageValue());
         int maxDamage = itemStack.getMaxDamage();
         int remainingDurability = Math.max(0, maxDamage - damage);
@@ -98,18 +101,18 @@ public class HammerItem extends Item {
             }
         }
 
-        consumer.accept(Component.translatable("proximahammers.tooltip.durability", prettyDurability(maxDamage), prettyDurability(remainingDurability))
+        components.add(Component.translatable("proximahammers.tooltip.durability", prettyDurability(maxDamage), prettyDurability(remainingDurability))
                 .withStyle(color));
-        consumer.accept(Component.translatable("proximahammers.tooltip.mining_speed", formatNumber(getEffectiveMiningSpeed(itemStack))).withStyle(ChatFormatting.GRAY));
-        consumer.accept(Component.translatable("proximahammers.tooltip.attack_damage", formatNumber(getEffectiveAttackDamage(itemStack))).withStyle(ChatFormatting.GRAY));
-        consumer.accept(Component.translatable("proximahammers.tooltip.attack_speed", formatNumber(this.attackSpeed)).withStyle(ChatFormatting.GRAY));
-        consumer.accept(Component.translatable("proximahammers.tooltip.area", getEffectiveRadius(itemStack), getEffectiveRadius(itemStack), getEffectiveDepth(itemStack)).withStyle(ChatFormatting.GRAY));
-        consumer.accept(Component.translatable("proximahammers.tooltip.enchantment_value", this.enchantmentValue).withStyle(ChatFormatting.DARK_GRAY));
+        components.add(Component.translatable("proximahammers.tooltip.mining_speed", formatNumber(getEffectiveMiningSpeed(itemStack))).withStyle(ChatFormatting.GRAY));
+        components.add(Component.translatable("proximahammers.tooltip.attack_damage", formatNumber(getEffectiveAttackDamage(itemStack))).withStyle(ChatFormatting.GRAY));
+        components.add(Component.translatable("proximahammers.tooltip.attack_speed", formatNumber(this.attackSpeed)).withStyle(ChatFormatting.GRAY));
+        components.add(Component.translatable("proximahammers.tooltip.area", getEffectiveRadius(itemStack), getEffectiveRadius(itemStack), getEffectiveDepth(itemStack)).withStyle(ChatFormatting.GRAY));
+        components.add(Component.translatable("proximahammers.tooltip.enchantment_value", this.enchantmentValue).withStyle(ChatFormatting.DARK_GRAY));
 
         var modules = HammerModuleData.getModules(itemStack);
         if (!modules.isEmpty()) {
-            consumer.accept(Component.translatable("proximahammers.tooltip.modules").withStyle(ChatFormatting.GOLD));
-            modules.forEach(module -> consumer.accept(Component.translatable(module.langKey()).withStyle(ChatFormatting.DARK_AQUA)));
+            components.add(Component.translatable("proximahammers.tooltip.modules").withStyle(ChatFormatting.GOLD));
+            modules.forEach(module -> components.add(Component.translatable(module.langKey()).withStyle(ChatFormatting.DARK_AQUA)));
         }
     }
 
@@ -141,12 +144,12 @@ public class HammerItem extends Item {
         return String.format("%.1f", value);
     }
 
-    private static int computeDurability(ToolMaterial tier, int level) {
+    private static int computeDurability(Tier tier, int level) {
         return computeDurability(tier, level, 1.0F);
     }
 
-    private static int computeDurability(ToolMaterial tier, int level, float statMultiplier) {
-        return Math.round(((int) (tier.durability() * 2.5F) + (200 * level)) * level * statMultiplier);
+    private static int computeDurability(Tier tier, int level, float statMultiplier) {
+        return Math.round(((int) (tier.getUses() * 2.5F) + (200 * level)) * level * statMultiplier);
     }
 
     public void causeAoe(Level level, BlockPos pos, BlockState state, ItemStack hammer, LivingEntity livingEntity) {
@@ -241,7 +244,7 @@ public class HammerItem extends Item {
                         });
                     }
 
-                    if (xp != -1 && ((ServerLevel) level).getGameRules().get(GameRules.BLOCK_DROPS)) {
+                    if (xp != -1 && ((ServerLevel) level).getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS)) {
                         ExperienceOrb.award((ServerLevel) level, Vec3.atCenterOf(blockPos), getEffectiveExperience(hammerStack, xp));
                     }
                 }
@@ -281,13 +284,15 @@ public class HammerItem extends Item {
     }
 
     @Override
-    public void hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+    public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+        boolean result = true;
         if (!HammerModuleData.has(stack, HammerModule.THOR)) {
-            super.hurtEnemy(stack, target, attacker);
+            result = super.hurtEnemy(stack, target, attacker);
         }
         if (HammerModuleData.has(stack, HammerModule.POWER) && attacker instanceof ServerPlayer player && target.level() instanceof ServerLevel serverLevel) {
-            target.hurtServer(serverLevel, player.damageSources().playerAttack(player), 12.0F);
+            target.hurt(player.damageSources().playerAttack(player), 12.0F);
         }
+        return result;
     }
 
     @Override
@@ -423,14 +428,37 @@ public class HammerItem extends Item {
         return true;
     }
 
-    private static ToolMaterial wrapMaterial(ToolMaterial toolMaterial, int durability, float statMultiplier, float speedMultiplier) {
-        return new ToolMaterial(
-                toolMaterial.incorrectBlocksForDrops(),
-                durability,
-                toolMaterial.speed() * speedMultiplier,
-                toolMaterial.attackDamageBonus() * statMultiplier,
-                Math.round(toolMaterial.enchantmentValue() * statMultiplier),
-                toolMaterial.repairItems()
-        );
+    private static Tier wrapMaterial(Tier toolMaterial, int durability, float statMultiplier, float speedMultiplier) {
+        return new Tier() {
+            @Override
+            public int getUses() {
+                return durability;
+            }
+
+            @Override
+            public float getSpeed() {
+                return toolMaterial.getSpeed() * speedMultiplier;
+            }
+
+            @Override
+            public float getAttackDamageBonus() {
+                return toolMaterial.getAttackDamageBonus() * statMultiplier;
+            }
+
+            @Override
+            public net.minecraft.tags.TagKey<Block> getIncorrectBlocksForDrops() {
+                return toolMaterial.getIncorrectBlocksForDrops();
+            }
+
+            @Override
+            public int getEnchantmentValue() {
+                return Math.round(toolMaterial.getEnchantmentValue() * statMultiplier);
+            }
+
+            @Override
+            public net.minecraft.world.item.crafting.Ingredient getRepairIngredient() {
+                return toolMaterial.getRepairIngredient();
+            }
+        };
     }
 }

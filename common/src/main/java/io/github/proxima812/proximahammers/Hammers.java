@@ -1,6 +1,6 @@
 package io.github.proxima812.proximahammers;
 
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import io.github.proxima812.proximahammers.config.SimpleJsonConfig;
 import io.github.proxima812.proximahammers.utils.XPlatShim;
 
@@ -16,7 +16,7 @@ public class Hammers {
         HammerItems.init();
     }
 
-    public static Identifier id(String name) {
-        return Identifier.fromNamespaceAndPath(MOD_ID, name);
+    public static ResourceLocation id(String name) {
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, name);
     }
 }
